@@ -44,3 +44,50 @@ Modelagem conceitual orientada a grafos
 | `BELONGS_TO`       | Music → Genre    | Classificação         |
 | `CREATED_PLAYLIST` | User → Playlist  | Criação               |
 | `HAS_MUSIC`        | Playlist → Music | Curadoria             |
+
+## 🏗 Exemplo de Criação do Grafo
+CREATE
+(u:User {
+  userId: 1,
+  name: "Marianne",
+  age: 30,
+  country: "BR"
+}),
+(m:Music {
+  musicId: 101,
+  title: "Shape of You",
+  releaseYear: 2017,
+  popularity: 95
+}),
+(a:Artist {
+  artistId: 201,
+  name: "Ed Sheeran"
+}),
+(g:Genre {
+  name: "Pop"
+}),
+(p:Playlist {
+  playlistId: 1001,
+  name: "Pop para Relaxar",
+  createdAt: date(),
+  isPublic: true,
+  mood: "Relax"
+});
+
+## 🔗 Criação das Conexões Semânticas
+CREATE
+(u)-[:LISTENED {count: 15, lastPlayed: date()}]->(m),
+(u)-[:LIKED {date: date()}]->(m),
+(u)-[:FOLLOW_ARTIST {since: 2022}]->(a),
+(a)-[:CREATED]->(m),
+(m)-[:BELONGS_TO]->(g),
+(u)-[:CREATED_PLAYLIST]->(p),
+(p)-[:HAS_MUSIC {position: 1, addedAt: date()}]->(m);
+
+## 🔍 Consultas de Recomendação (Exemplo)
+MATCH (u:User)-[:LISTENED]->(m:Music)<-[:LISTENED]-(other:User)-[:LISTENED]->(rec:Music)
+WHERE u.userId = 1 AND NOT (u)-[:LISTENED]->(rec)
+RETURN rec.title, COUNT(*) AS relevance
+ORDER BY relevance DESC;
+
+![Modelo do Grafo](images/graph-model.png)
