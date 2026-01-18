@@ -90,4 +90,4 @@ WHERE u.userId = 1 AND NOT (u)-[:LISTENED]->(rec)
 RETURN rec.title, COUNT(*) AS relevance
 ORDER BY relevance DESC;
 
-![Modelo do Grafo](images/graph-model.png)
+![Modelo do Grafo](grafoneo4j.png)
